@@ -1,0 +1,75 @@
+{
+  "project_info": {
+    "project_number": "770178988199",
+    "firebase_url": "https://ride-tricycle-app-cef2c-default-rtdb.firebaseio.com",
+    "project_id": "ride-tricycle-app-cef2c",
+    "storage_bucket": "ride-tricycle-app-cef2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770178988199:android:f20683616d91503db9c382",
+        "android_client_info": {
+          "package_name": "com.tagbilarancity.driversapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770178988199-1ovqg142gnnd7j8a1squjrat67ejhq6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKvCF6FJhw7QOhw8CqForsP-6ec3RNQjk"
+        },
+        {
+          "current_key": "AIzaSyBy5oklSOKVd4xpmSVUSq2E9jWbuxfId04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770178988199-1ovqg142gnnd7j8a1squjrat67ejhq6v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770178988199:android:a336aa9f8efd25d3b9c382",
+        "android_client_info": {
+          "package_name": "com.tagbilarancity.riderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770178988199-1ovqg142gnnd7j8a1squjrat67ejhq6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKvCF6FJhw7QOhw8CqForsP-6ec3RNQjk"
+        },
+        {
+          "current_key": "AIzaSyBy5oklSOKVd4xpmSVUSq2E9jWbuxfId04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770178988199-1ovqg142gnnd7j8a1squjrat67ejhq6v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
