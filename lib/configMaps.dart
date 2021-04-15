@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:drivers_app/Models/allUsers.dart';
 import 'package:geolocator/geolocator.dart';
 
-String mapKey = "AIzaSyCKvCF6FJhw7QOhw8CqForsP-6ec3RNQjk";
+String mapKey = "AIzaSyBy5oklSOKVd4xpmSVUSq2E9jWbuxfId04";
 
 User firebaseUser;
 
