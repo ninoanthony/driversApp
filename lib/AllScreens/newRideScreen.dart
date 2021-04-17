@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:drivers_app/AllWidgets/progressDialog.dart';
 import 'package:drivers_app/Assistants/assistantMethods.dart';
+import 'package:drivers_app/Assistants/mapKitAssistant.dart';
 import 'package:drivers_app/DataHandler/appData.dart';
 import 'package:drivers_app/Models/rideDetails.dart';
 import 'package:drivers_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../configMaps.dart';
@@ -35,6 +37,20 @@ class _NewRideScreenState extends State<NewRideScreen>
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
   double mapPaddingFromBottom = 0;
+  var geoLocator = Geolocator;
+  var locationOptions = LocationOptions(accuracy: LocationAccuracy.bestForNavigation);
+  BitmapDescriptor animatingMarkerIcon;
+  Position myPosition;
+  String status = "accepted";
+  String durationRide="";
+  bool isRequestingDirection = false;
+  String btnTitle = "Arrived";
+  Color btnColor = Colors.blueAccent;
+  Timer timer;
+  int durationCounter = 0;
+
+
+
 
   @override
   void initState() {
@@ -43,8 +59,65 @@ class _NewRideScreenState extends State<NewRideScreen>
     acceptRideRequest();
   }
 
+  void createIconMarker()
+  {
+    if(animatingMarkerIcon == null)
+    {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(2, 2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car_android.png")
+          .then((value)
+      {
+        animatingMarkerIcon = value;
+      });
+    }
+  }
+
+  void getRideLiveLocationUpdates()
+  {
+    LatLng oldPos = LatLng(0, 0);
+
+    rideStreamSubscription = Geolocator.getPositionStream().listen((Position position)
+    {
+      currentPosition = position;
+      myPosition = position;
+      LatLng mPosition = LatLng(position.latitude, position.longitude);
+
+      var rot = MapKitAssistant.getMarkerRotation(oldPos.latitude, oldPos.longitude, myPosition.latitude, myPosition.longitude);
+
+
+      Marker animatingMarker = Marker(
+        markerId: MarkerId("animating"),
+        position: mPosition,
+        icon: animatingMarkerIcon,
+        rotation: rot,
+        infoWindow: InfoWindow(title: "Current Location"),
+      );
+
+      setState(() {
+        CameraPosition cameraPosition = new CameraPosition(target: mPosition, zoom: 17);
+        newRideGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+        markersSet.removeWhere((marker) => marker.markerId.value == "animating");
+        markersSet.add(animatingMarker);
+      });
+      oldPos = mPosition;
+      updateRideDetails();
+
+      String rideRequestId = widget.rideDetails.ride_request_id;
+      Map locMap =
+      {
+        "latitude": currentPosition.latitude.toString(),
+        "longitude": currentPosition.longitude.toString(),
+      };
+      newRequestsRef.child(rideRequestId).child("driver_location").set(locMap);
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
+    createIconMarker();
+
     return Scaffold(
      body: Stack(
        children: [
@@ -70,6 +143,8 @@ class _NewRideScreenState extends State<NewRideScreen>
              var pickUpLatLng = widget.rideDetails.pickUp;
 
              await getPlaceDirection(currentLatLng, pickUpLatLng);
+
+             getRideLiveLocationUpdates();
            },
          ),
 
@@ -97,11 +172,11 @@ class _NewRideScreenState extends State<NewRideScreen>
                child: Column(
                  children: [
                    Text(
-                     "10 mins",
+                     durationRide ,
                      style: TextStyle(fontSize: 14.0, fontFamily: "Brand-Bold", color: Colors.deepPurple),
                    ),
 
-                   SizedBox(height: 16.0,),
+                   SizedBox(height: 6.0,),
 
                    Row(
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,18 +230,54 @@ class _NewRideScreenState extends State<NewRideScreen>
                    Padding(
                      padding: EdgeInsets.symmetric(horizontal: 16.0),
                      child: RaisedButton(
-                       onPressed: ()
+                       onPressed: () async
                        {
+                         if(status == "accepted")
+                         {
+                           status = "arrived";
+                           String rideRequestId = widget.rideDetails.ride_request_id;
+                           newRequestsRef.child(rideRequestId).child("status").set(status);
 
+                           setState(() {
+                             btnTitle = "Start Trip";
+                             btnColor = Colors.purple;
+                           });
+                           showDialog(
+                             context: context,
+                             barrierDismissible: false,
+                             builder: (BuildContext context)=> ProgressDialog(message: "Please wait..."),
+                           );
+
+                           await getPlaceDirection(widget.rideDetails.pickUp, widget.rideDetails.dropOff);
+
+                           Navigator.pop(context);
+                         }
+                         else if(status == "arrived")
+                         {
+                           status = "onride";
+                           String rideRequestId = widget.rideDetails.ride_request_id;
+                           newRequestsRef.child(rideRequestId).child("status").set(status);
+
+                           setState(() {
+                             btnTitle = "End Trip";
+                             btnColor = Colors.redAccent;
+                           });
+
+                           initTimer();
+                         }
+                         else if(status == "onride")
+                         {
+                           endTheTrip();
+                         }
                        },
-                       color: Theme.of(context).accentColor,
+                       color: btnColor,
                        child: Padding(
                          padding: EdgeInsets.all(17.0),
                          child: Row(
                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                            children: [
-                             Text("Arrived", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),),
-                             Icon(Icons.directions_car, color: Colors.white, size: 26.0,),
+                             Text(btnTitle, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),),
+                             Icon(Icons.directions_car , color: Colors.white, size: 26.0,),
                            ],
                          ),
                        ),
@@ -303,5 +414,72 @@ class _NewRideScreenState extends State<NewRideScreen>
       "longitude": currentPosition.longitude.toString(),
     };
     newRequestsRef.child(rideRequestId).child("driver_location").set(locMap);
+  }
+
+  void updateRideDetails() async
+  {
+    if(isRequestingDirection == false)
+    {
+      isRequestingDirection = true;
+
+      if(myPosition == null)
+      {
+        return;
+      }
+
+      var posLatLng = LatLng(myPosition.latitude, myPosition.longitude);
+      LatLng destinationLatLng;
+
+      if(status == "accepted")
+      {
+        destinationLatLng = widget.rideDetails.pickUp;
+      }
+      else
+      {
+        destinationLatLng = widget.rideDetails.dropOff;
+      }
+
+      var directionDetails = await AssistantMethods.obtainPlaceDirectionDetails(posLatLng, destinationLatLng);
+      if(directionDetails != null)
+      {
+        setState(() {
+          durationRide = directionDetails.durationText;
+        });
+      }
+
+      isRequestingDirection = false;
+    }
+  }
+
+  void initTimer()
+  {
+    const interval = Duration(seconds: 1);
+    timer = Timer.periodic(interval, (timer) {
+      durationCounter = durationCounter + 1;
+    });
+  }
+
+  endTheTrip() async
+  {
+    timer.cancel();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context)=> ProgressDialog(message: "Please wait...",),
+    );
+
+    var currentLatLng = LatLng(myPosition.latitude, myPosition.longitude);
+
+    var directionDetails = await AssistantMethods.obtainPlaceDirectionDetails(widget.rideDetails.pickUp, currentLatLng);
+
+    Navigator.pop(context);
+
+    int fareAmount = AssistantMethods.calculateFares(directionDetails);
+
+    String rideRequestId = widget.rideDetails.ride_request_id;
+    newRequestsRef.child(rideRequestId).child("status").set(fareAmount.toString());
+    newRequestsRef.child(rideRequestId).child("status").set("ended");
+    rideStreamSubscription.cancel();
   }
 }

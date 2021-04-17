@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -98,5 +99,17 @@ class AssistantMethods
 //      }
 //    });
 //  }
+
+  static void disablehomeTabLiveLocationUpdates()
+  {
+    homeTabPageStreamSubscription.pause();
+    Geofire.removeLocation(currentfirebaseUser.uid);
+  }
+
+  static void enablehomeTabLiveLocationUpdates()
+  {
+    homeTabPageStreamSubscription.pause();
+    Geofire.setLocation(currentfirebaseUser.uid, currentPosition.latitude, currentPosition.longitude);
+  }
 }
 

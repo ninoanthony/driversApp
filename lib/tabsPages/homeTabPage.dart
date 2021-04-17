@@ -181,7 +181,6 @@ class _HomeTabPageState extends State<HomeTabPage> {
        }
        LatLng latLng = LatLng(position.latitude, position.longitude);
        newGoogleMapController.animateCamera(CameraUpdate.newLatLng(latLng));
-
       });
    }
 
