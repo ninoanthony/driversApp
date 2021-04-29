@@ -118,7 +118,7 @@ class RegistrationScreen extends StatelessWidget
 
                     SizedBox(height: 20.0,),
                     RaisedButton(
-                      color: Colors.yellow,
+                      color: Colors.lightBlue,
                       textColor: Colors.white,
                       child: Container(
                         height: 50.0,
@@ -136,7 +136,7 @@ class RegistrationScreen extends StatelessWidget
                       {
                         if(nameTextEditingController.text.length < 3)
                         {
-                          displayToastMessage("name must be atleast 3 Characters.", context);
+                          displayToastMessage("name must be at least 3 Characters.", context);
                         }
                         else if(!emailTextEditingController.text.contains("@"))
                         {
@@ -148,7 +148,7 @@ class RegistrationScreen extends StatelessWidget
                         }
                         else if(passwordTextEditingController.text.length < 6)
                         {
-                          displayToastMessage("Password must be atleast 6 Characters.", context);
+                          displayToastMessage("Password must be at least 6 Characters.", context);
                         }
                         else
                         {

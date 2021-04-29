@@ -10,6 +10,8 @@ import 'package:drivers_app/AllScreens/registrationScreen.dart';
 import 'package:drivers_app/DataHandler/appData.dart';
 import 'package:drivers_app/AllScreens/carInfoScreen.dart';
 
+import 'AllScreens/welcomeScreen.dart';
+
 void main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,12 +38,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Tricycle Driver App',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.lightBlue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: FirebaseAuth.instance.currentUser == null ? LoginScreen.idScreen : MainScreen.idScreen,
+        initialRoute: FirebaseAuth.instance.currentUser == null ? WelcomeScreen.idScreen : MainScreen.idScreen,
         routes:
         {
+           WelcomeScreen.idScreen: (context) => WelcomeScreen(),
           RegistrationScreen.idScreen: (context) => RegistrationScreen(),
           LoginScreen.idScreen: (context) => LoginScreen(),
           MainScreen.idScreen: (context) => MainScreen(),

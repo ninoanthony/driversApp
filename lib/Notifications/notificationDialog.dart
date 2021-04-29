@@ -145,7 +145,7 @@ class NotificationDialog extends StatelessWidget
       if(theRideId == rideDetails.ride_request_id)
       {
          rideRequestRef.set("accepted");
-         AssistantMethods.disablehomeTabLiveLocationUpdates();
+         AssistantMethods.disableHomeTabLiveLocationUpdates();
          Navigator.push(context, MaterialPageRoute(builder: (context)=> NewRideScreen(rideDetails: rideDetails)));
       }
 

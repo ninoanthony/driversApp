@@ -10,7 +10,7 @@ class ProgressDialog extends StatelessWidget
   Widget build(BuildContext context)
   {
     return Dialog(
-      backgroundColor: Colors.yellow,
+      backgroundColor: Colors.lightBlue,
       child: Container(
         margin: EdgeInsets.all(15.0),
         width: double.infinity,

@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                     SizedBox(height: 20.0,),
                     RaisedButton(
-                      color: Colors.yellow,
+                      color: Colors.lightBlue,
                       textColor: Colors.white,
                       child: Container(
                         height: 50.0,

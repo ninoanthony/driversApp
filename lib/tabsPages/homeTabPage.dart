@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:drivers_app/AllScreens/registrationScreen.dart';
+import 'package:drivers_app/Assistants/assistantMethods.dart';
 import 'package:drivers_app/Models/drivers.dart';
 import 'package:drivers_app/Notifications/pushNotificationService.dart';
 import 'package:drivers_app/configMaps.dart';
@@ -44,6 +45,57 @@ class _HomeTabPageState extends State<HomeTabPage> {
     getCurrentDriverInfo();
   }
 
+  getRatings()
+  {
+    //update Ratings
+    driversRef.child(currentfirebaseUser.uid).child("ratings").once().then((DataSnapshot dataSnapshot)
+    {
+      if(dataSnapshot.value != null)
+      {
+        double ratings = double.parse(dataSnapshot.value.toString());
+        setState(() {
+          starCounter = ratings;
+        });
+        if(starCounter <=1)
+        {
+          setState(() {
+            title = "Very Bad";
+          });
+          return;
+        }
+        if(starCounter <=2)
+        {
+          setState(() {
+            title = "Bad";
+          });
+          return;
+        }
+        if(starCounter <=3)
+        {
+          setState(() {
+            title = "Good";
+          });
+          return;
+        }
+        if(starCounter <=4)
+        {
+          setState(() {
+            title = "Very Good";
+          });
+          return;
+        }
+        if(starCounter <=5)
+        {
+          setState(() {
+            title = "Excellent";
+          });
+          return;
+        }
+      }
+    });
+
+  }
+
   void locatePosition() async
   {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -69,6 +121,9 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
     pushNotificationService.initialize(context);
     pushNotificationService.getToken();
+
+    AssistantMethods.retrieveHistoryInfo(context);
+    getRatings();
   }
 
   @override
@@ -93,7 +148,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
         Container(
           height: 140.0,
           width: double.infinity,
-          color: Colors.black87,
+          color: Colors.lightBlue ,
         ),
 
         Positioned(
