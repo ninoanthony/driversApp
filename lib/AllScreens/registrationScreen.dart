@@ -28,7 +28,7 @@ class RegistrationScreen extends StatelessWidget
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(height: 20.0,),
+              SizedBox(height: 35.0,),
               Image(
                 image: AssetImage("images/logo.png"),
                 width: 390.0,
@@ -36,7 +36,7 @@ class RegistrationScreen extends StatelessWidget
                 alignment: Alignment.center,
               ),
 
-              SizedBox(height: 1.0,),
+              SizedBox(height: 20.0,),
               Text(
                 "Register as a Driver",
                 style: TextStyle(fontSize: 24.0, fontFamily: "Brand Bold"),
@@ -48,7 +48,7 @@ class RegistrationScreen extends StatelessWidget
                 child: Column(
                   children: [
 
-                    SizedBox(height: 1.0,),
+                    SizedBox(height: 10.0,),
                     TextField(
                       controller: nameTextEditingController,
                       keyboardType: TextInputType.text,
@@ -116,9 +116,9 @@ class RegistrationScreen extends StatelessWidget
                       style: TextStyle(fontSize: 14.0),
                     ),
 
-                    SizedBox(height: 20.0,),
+                    SizedBox(height: 40.0,),
                     RaisedButton(
-                      color: Colors.lightBlue,
+                      color: Colors.lightBlue,  
                       textColor: Colors.white,
                       child: Container(
                         height: 50.0,

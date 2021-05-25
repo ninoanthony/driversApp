@@ -59,6 +59,9 @@ class PushNotificationService
   {
     newRequestsRef.child(rideRequestId).once().then((DataSnapshot dataSnapShot)
     {
+      print("ninoooooooooooooooooooooooooooooooooooooo000");
+      print(dataSnapShot.value);
+
       if(dataSnapShot.value != null)
         {
 

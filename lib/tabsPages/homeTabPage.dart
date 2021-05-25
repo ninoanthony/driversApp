@@ -144,6 +144,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
           },
         ),
 
+       
         //online offline driver Container
         Container(
           height: 140.0,
@@ -209,6 +210,8 @@ class _HomeTabPageState extends State<HomeTabPage> {
       ],
     );
   }
+
+
 
    void makeDriverOnlineNow() async
    {

@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen>
                 alignment: Alignment.center,
               ),
 
-              SizedBox(height: 1.0,),
+              SizedBox(height: 20.0,),
               Text(
                 "Login as a Driver",
                 style: TextStyle(fontSize: 24.0, fontFamily: "Brand Bold"),
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen>
                 child: Column(
                   children: [
 
-                    SizedBox(height: 1.0,),
+                    SizedBox(height: 10.0,),
                     TextField(
                       controller: emailTextEditingController,
                       keyboardType: TextInputType.emailAddress,
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen>
                       style: TextStyle(fontSize: 14.0),
                     ),
 
-                    SizedBox(height: 20.0,),
+                    SizedBox(height: 150.0,),
                     RaisedButton(
                       color: Colors.lightBlue,
                       textColor: Colors.white,

@@ -77,15 +77,15 @@ class AssistantMethods
   static int calculateFares(DirectionDetails directionDetails)
   {
     //in terms USD
-    double timeTraveledFare = (directionDetails.durationValue / 60) *0.04;
-    double distanceTraveledFare = (directionDetails.distanceValue / 1000) * 0.04;
+    double timeTraveledFare = (directionDetails.durationValue / 60) *0;
+    double distanceTraveledFare = (directionDetails.distanceValue / 2000) + 15;
     double totalFareAmount = timeTraveledFare + distanceTraveledFare;
 
 
     //convert to peso(1 dollar= 48.54
-    double totalLocalAmount = totalFareAmount *48.54;
+    //double totalLocalAmount = totalFareAmount *48.54;
 
-    return totalLocalAmount.truncate();
+    return totalFareAmount.truncate();
   }
 
 //  static void getCurrentOnlineUserInfo() async
@@ -106,7 +106,7 @@ class AssistantMethods
   static void disableHomeTabLiveLocationUpdates()
   {
     homeTabPageStreamSubscription.pause();
-    Geofire.removeLocation(currentfirebaseUser.uid);
+    //Geofire.removeLocation(currentfirebaseUser.uid);
   }
 
   static void enableHomeTabLiveLocationUpdates()

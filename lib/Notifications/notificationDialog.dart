@@ -7,15 +7,23 @@ import 'package:drivers_app/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:flutter/scheduler.dart';
+List<Point> myPointList = List<Point>();
+
 
 class NotificationDialog extends StatelessWidget
 {
   final RideDetails rideDetails;
+  var globalrideRequestId;
+
 
   NotificationDialog({this.rideDetails});
 
+
   @override
   Widget build(BuildContext context) {
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       backgroundColor: Colors.transparent,
@@ -47,8 +55,8 @@ class NotificationDialog extends StatelessWidget
                       SizedBox(width: 20.0,),
                       Expanded(
                         child: Container(child: Text(rideDetails.pickup_address, style: TextStyle(fontSize: 18.0),)),
-                        ),
-                     ],
+                      ),
+                    ],
                   ),
                   SizedBox(height: 15.0),
 
@@ -59,7 +67,7 @@ class NotificationDialog extends StatelessWidget
                       SizedBox(width: 20.0,),
                       Expanded(
                         child: Container(child: Text(rideDetails.dropOff_address, style: TextStyle(fontSize: 18.0),)),
-                        )
+                      )
                     ],
                   ),
                   SizedBox(height: 15.0),
@@ -109,6 +117,7 @@ class NotificationDialog extends StatelessWidget
                       assetsAudioPlayer.stop();
                       checkAvailabilityOfRide(context);
                     },
+
                     color: Colors.green,
                     textColor: Colors.white,
                     child: Text("Accept".toUpperCase(),
@@ -126,44 +135,83 @@ class NotificationDialog extends StatelessWidget
     );
   }
 
-  void checkAvailabilityOfRide(context)
-  {
-    rideRequestRef.once().then((DataSnapshot dataSnapshot)
-    {
-      Navigator.pop(context);
-      String theRideId = "";
-      if(dataSnapshot.value != null)
-      {
-        theRideId = dataSnapshot.value.toString();
-      }
+  void checkAvailabilityOfRide(context)async{
+    //var rideRequestId = await rideRequestRef.once();
+    var dataSnapShot2 =  await newRequestsRef.child( (await rideRequestRef.once()).value).once();
+    Navigator.pop(context);
+    String theRideId = "";
+    if(myPointList.length == 3)   {
+      myPointList.add(Point(double.parse(dataSnapShot2.value['pickUp']['latitude'].toString()),double.parse(dataSnapShot2.value['pickUp']['longitude'].toString())));
+      myPointList.add(Point(double.parse(dataSnapShot2.value['dropOff']['latitude'].toString()),double.parse(dataSnapShot2.value['dropOff']['longitude'].toString())));
+    }
 
-      else
-      {
-        displayToastMessage("Ride not exists.", context);
-      }
+    if(myPointList.length == 0)   {
+      // myPointList.add(Point(double.parse(dataSnapShot2.value['driver_location']['latitude'].toString()),double.parse(dataSnapShot2.value['driver_location']['longitude'].toString())));
+      myPointList.add(Point(0,0));
+      myPointList.add(Point(double.parse(dataSnapShot2.value['pickUp']['latitude'].toString()),double.parse(dataSnapShot2.value['pickUp']['longitude'].toString())));
+      myPointList.add(Point(double.parse(dataSnapShot2.value['dropOff']['latitude'].toString()),double.parse(dataSnapShot2.value['dropOff']['longitude'].toString())));
+    }
+    var a = 0;
+    print(myPointList.length);
+    while(a<myPointList.length){
+      print(myPointList[a].x);
+      print(myPointList[a].y);
+      a++;
 
-      if(theRideId == rideDetails.ride_request_id)
-      {
-         rideRequestRef.set("accepted");
-         AssistantMethods.disableHomeTabLiveLocationUpdates();
-         Navigator.push(context, MaterialPageRoute(builder: (context)=> NewRideScreen(rideDetails: rideDetails)));
-      }
+    }
+    bool r2canShare = true;
+    if(myPointList.length > 3){
+      var A1 = ((myPointList[3].x - myPointList[1].x).abs())*(myPointList[3].y - myPointList[1].y).abs()*12321.0;
+      print(myPointList[3].x);
+      print(myPointList[1].x);
+      print(myPointList[3].y);
+      print(myPointList[1].y);
+      print(A1);
 
-      else if(theRideId == 'cancelled')
-      {
-        displayToastMessage("Ride has been Cancelled.", context);
-      }
+      var A2 = ((myPointList[3].x - myPointList[2].x).abs())*(myPointList[3].y - myPointList[1].y).abs()*12321.0;
+      print(myPointList[3].x);
+      print(myPointList[2].x);
+      print(myPointList[3].y);
+      print(myPointList[1].y);
+      print(A2);
 
-      else if(theRideId == 'cancelled')
-      {
-        displayToastMessage("Ride has been time out.", context);
-      }
+      var A3 = ((myPointList[3].x - myPointList[2].x).abs())*(myPointList[3].y - myPointList[2].y).abs()*12321.0;
+      print(myPointList[3].x);
+      print(myPointList[2].x);
+      print(myPointList[3].y);
+      print(myPointList[2].y);
+      print(A3);
 
-      else
-      {
-        displayToastMessage("Ride not exists.", context);
-      }
+      var A4 = ((myPointList[3].x - myPointList[1].x).abs())*(myPointList[3].y - myPointList[2].y).abs()*12321.0;
+      print(myPointList[3].x);
+      print(myPointList[1].x);
+      print(myPointList[3].y);
+      print(myPointList[2].y);
+      print(A4);
 
-    });
+      var Atot = ((myPointList[1].x - myPointList[2].x).abs())*(myPointList[1].y - myPointList[2].y).abs()*12321.0;
+      print(myPointList[1].x);
+      print(myPointList[2].x);
+      print(myPointList[1].y);
+      print(myPointList[2].y);
+      print(A1+A2+A3+A4);
+      print(Atot);
+      if(((A1+A2+A3+A4) - Atot).abs()<0.1){
+        r2canShare = true;
+      }else{
+        r2canShare = false;
+      }
+    }
+    if (r2canShare == true){
+      rideRequestRef.set("accepted");
+      assetsAudioPlayer.stop();
+      AssistantMethods.disableHomeTabLiveLocationUpdates();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRideScreen(rideDetails: rideDetails)));
+    }else{
+      assetsAudioPlayer.stop();
+      displayToastMessage("Rider 2 cannot shared ride, out of range.", context);
+
+    }
+
   }
 }
